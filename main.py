@@ -63,6 +63,48 @@ async def file_list(
         raise Exception(f"An error occurred: {str(e)}")
 
 
+@mcp.tool(description="创建项目")
+async def create_project(
+    project_name: str = Field(..., description="项目名称"),
+    project_no: str = Field(..., description="项目编号"),
+    charge_user_id: int = Field(..., description="负责人ID"),
+    comment: str = Field('', description="备注")
+):
+    """
+    Name:
+        创建项目
+    Description:
+        创建项目
+    Args:
+        project_name: 项目名称
+        project_no: 项目编号
+        charge_user_id: 负责人ID
+        comment: 备注
+    """
+    url = f"{host}/api/pm/project/add"
+    data = {
+        "project_name": project_name,
+        "project_no": project_no,
+        "charge_user_id": charge_user_id,
+        "comment": comment
+    }
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(url, headers=headers, json=data)
+            result = resp.json()
+            code = result.get("code")
+            if code != 0:
+                error_msg = result.get("message", "unkown error")
+                raise Exception(f"API response error: {error_msg}")
+            data = result.get("data")
+            return data
+    except httpx.HTTPError as e:
+        raise Exception(f"HTTP request failed: {str(e)}")
+    except Exception as e:
+        raise Exception(f"An error occurred: {str(e)}")
+
+
+
 if __name__ == '__main__':
     mcp.run(transport="stdio")
     # mcp.run(transport="sse")
