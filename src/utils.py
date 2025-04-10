@@ -7,7 +7,7 @@ async def send_request(method, url, headers, params, data):
             resp = await client.request(method, url, headers=headers, params=params, json=data)
             result = resp.json()
             code = result.get("code")
-            if code != 0:
+            if code != "0":
                 error_msg = result.get("message", "unkown error")
                 raise Exception(f"API response error: {error_msg}")
             data = result.get("data")
