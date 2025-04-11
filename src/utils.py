@@ -1,8 +1,10 @@
+import os
 import httpx
 from pydantic import Field
 import uuid
 
 from server import host, headers
+
 
 async def send_request(method, url, headers, params, data):
     try:
@@ -23,8 +25,8 @@ async def send_request(method, url, headers, params, data):
 
 
 async def upload_file(
-    file_path: str = Field(..., description="文件路径"),
-    file_name: str = Field(..., description="文件名"),
+        file_path: str = Field(..., description="文件路径"),
+        file_name: str = Field(..., description="文件名"),
 ):
     """
     Name:
@@ -40,9 +42,10 @@ async def upload_file(
         "no": "0",
         "identification": identification,
     }
-
+    file_path = os.path.expanduser(file_path)
     async with httpx.AsyncClient() as client:
-        resp = await client.request("POST", url, headers=headers, data=data, files={"file": (file_name, open(file_path, "rb"), "application/octet-stream")})
+        resp = await client.request("POST", url, headers=headers, data=data,
+                                    files={"file": (file_name, open(file_path, "rb"), "application/octet-stream")})
         result = resp.json()
         if resp.status_code != 200 or result.get("code") != "0":
             raise Exception(f"API response error: {result.get('message', 'unkown error')}")

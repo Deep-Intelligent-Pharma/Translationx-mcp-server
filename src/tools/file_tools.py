@@ -2,11 +2,11 @@ import asyncio
 import os
 import uuid
 from typing import Union
-
+from urllib.parse import unquote
 import httpx
 from pydantic import Field, BaseModel
 
-from utils import send_request
+from utils import send_request, upload_file
 from server import mcp, host, headers
 
 
@@ -104,6 +104,26 @@ async def submit_translation(
     # print(a.text)
 
 
+@mcp.tool(description="文件翻译模块:上传文件")
+async def file_add(
+        file_path: str = Field(..., description="文件路径"),
+        file_name: str = Field(..., description="文件名")
+):
+    data = await upload_file(file_path, file_name)
+    url = f"{host}/api/trans/file_upload"
+    headers["x-request-id"] = f"mcp-{str(uuid.uuid4())}"
+    data = {
+        "files": [
+            {
+                "file_path": file_path,
+                "filename": file_name,
+                "is_can_edit": data.get("is_can_edit", 1)
+            }
+        ]
+    }
+    return await send_request("POST", url, headers, None, data)
+
+
 @mcp.tool(description="根据文件id删除文件")
 async def delete_file(ids: list[str] = Field(..., description="文件id列表")):
     """
@@ -137,9 +157,6 @@ async def download_target_file(
         local_storage_path: 文件存储路径
     """
     url = f"{host}/api/trans/file_download/target"
-    # headers = {
-    #     "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NTA1LCJlbWFpbCI6Inlhbmdzb25nYmFpQGRpcC1haS5jb20iLCJyb2xlIjoiZnJlZSIsImF1dGhfcHJvdmlkZXIiOiJlbWFpbCIsImV4cCI6MTc0NDc3MjE2MiwibW9kZSI6ImFjY2Vzc190b2tlbiJ9.mNYtsjEg6mutssp66J46lswdkq7zziHJNHvRCwMEm00"
-    # }
     data = {
         "file_id": [int(file_id)],
         "download_type": 2
@@ -152,8 +169,7 @@ async def download_target_file(
                 content_type = resp.headers.get("content-type")
                 if "text/plain" in content_type:
                     filename = resp.headers.get("x-filename")
-                    if isinstance(filename, bytes):
-                        filename = filename.decode("utf-8")
+                    filename = unquote(filename)
                     local_storage_path = os.path.expanduser(local_storage_path)
                     if not os.path.exists(local_storage_path):
                         return f"文件存储路径 `{local_storage_path}` 不存在"
