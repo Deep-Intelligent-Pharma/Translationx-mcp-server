@@ -50,7 +50,7 @@ async def create_memory_lib(
     return await send_request("POST", url, headers, None, data=data)
 
 
-@mcp.tool(description="添加记忆库条目")
+@mcp.tool(description="给记忆库添加条目")
 async def add_memory_lib_entry(
         ml_id: str = Field(..., description="记忆库ID"),
         source_text: str = Field(..., description="源语言文本"),
@@ -110,7 +110,7 @@ async def create_term_lib(
 
 
 @mcp.tool(description="添加术语库条目")
-async def add_memory_lib_entry(
+async def add_term_lib_entry(
         tl_id: str = Field(..., description="术语库ID"),
         source_text: str = Field(..., description="源语言文本"),
         target_text: str = Field(..., description="目标语言文本"),
