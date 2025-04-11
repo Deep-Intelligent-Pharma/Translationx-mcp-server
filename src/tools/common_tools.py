@@ -1,7 +1,5 @@
 import uuid
-
 import httpx
-from pydantic import Field
 
 from server import mcp, host, headers
 
@@ -16,7 +14,7 @@ async def get_language_code():
     """
     url = f"{host}/api/common/enums"
     headers["x-request-id"] = f"mcp-{str(uuid.uuid4())}"
-    headers['x-language'] = 'en-US'
+    headers['x-language'] = 'zh-CN'
     try:
         async with httpx.AsyncClient() as client:
             resp = await client.request("GET", url, headers=headers)
