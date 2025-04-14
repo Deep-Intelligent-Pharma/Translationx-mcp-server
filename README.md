@@ -26,21 +26,21 @@ uv python install 3.13
 ```
 
 ### 获取 MCP Server
-前往TranslationX Mcp Server 官方[开源仓库](https://github.com/)下载
+前往TranslationX Mcp Server 官方[开源仓库](https://github.com/Deep-Intelligent-Pharma/Translationx-mcp-server/)下载
 
 ### 配置本地项目
 通过`uv`创建一个项目
 
 ```bash
-uv init mcp_server_tx_mcp
+uv init mcp_server_translation
 ```
 
-将`map.py`拷贝到该目录下，通过如下命令测试mcp server是否正常运行
+将`src`文件夹拷贝到该目录下，通过如下命令测试mcp server是否正常运行
 
 ```bash
-uv run --with mcp[cli] mcp run {YOUR_PATH}/tx-mcp/src/map.py
+uv run --with mcp[cli] mcp run {YOUR_PATH}/src/main.py
 # 如果是mac，需要加转义符
-uv run --with mcp\[cli\] mcp run {YOUR_PATH}/tx-mcp/src/map.py
+uv run --with mcp\[cli\] mcp run {YOUR_PATH}/src/main.py
 ```
 
 如果没有报错则MCP Server启动成功
@@ -49,9 +49,9 @@ uv run --with mcp\[cli\] mcp run {YOUR_PATH}/tx-mcp/src/map.py
 
 打开`Cursor`配置，在MCP中添加MCP Server
 
-![](../../../img/cursor_setting.png)
+![](img/cursor_setting.png)
 
-在文件中添加如下内容后保存
+在文件中添加如下内容后保存, TRANSLATIONX_TOKEN 可以在[X-DOC](https://x-doc.ai/)中获取
 
 ```json
 {
@@ -64,24 +64,25 @@ uv run --with mcp\[cli\] mcp run {YOUR_PATH}/tx-mcp/src/map.py
         "mcp[cli]",
         "mcp",
         "run",
-        "{YOUR_PATH}/tx-mcp/src/map.py"
+        "{YOUR_PATH}/src/main.py"
       ],
       "env": {
-        "token": "<token>"
+        "token": "<YOUR_TRANSLATIONX_TOKEN>"
       }
     }
   }
 }
 ```
 
-回到配置，此时百度MCP Server已经启用
+回到配置，此时TranslationX MCP Server已经启用
 
-![](../../../img/cursor_run_mcp_success.png)
+![](img/cursor_run_mcp_success.png)
 
 ### 测试
 
-行程规划：
+创建项目,并创建文件夹,然后文件到文件夹中，并提交翻译：
 
-![](../../../img/cursor_test_1.png)
+![](img/cursor_test_1.png)
+![](img/cursor_test_1_1.png)
 
-![](../../../img/cursor_test_2.png)
+![](/img/cursor_test_2.png)
